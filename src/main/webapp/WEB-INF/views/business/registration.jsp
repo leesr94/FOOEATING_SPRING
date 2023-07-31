@@ -49,8 +49,11 @@ $(document).ready(function() {
 	$("#step2").hide();
 	$("#step3").hide();
 	
-	// 작성 정보를 저장할 객체
+	// 사용자가 입력한 사업장 정보를 저장할 객체
 	var registInfo = {};
+	
+	// 사용자가 입력한 메뉴 정보를 저장할 객체 (없을 수도 있음)
+	var registMenu = {};
 	
 	
 	
@@ -78,8 +81,8 @@ $(document).ready(function() {
 	$("#btn-next1").click(function() {
 		registInfo.restName = $("#restName").val();		// 상호명
 		registInfo.restCategory = $("#restCategory").val();		// 업종
-		registInfo.restAddr = $("#restAddrPostcode").val() + " " + $("#restAddr1").val();	// 주소
-		if ($("#restAddr2").val()) { registInfo.restAddr +=  " " + $("#restAddr2").val(); }
+		registInfo.restAddr = $("#restAddrPostcode").val() + "/" + $("#restAddr1").val();	// 주소
+		if ($("#restAddr2").val()) { registInfo.restAddr +=  "/" + $("#restAddr2").val(); }
 		
 		registInfo.restTel = $("#restTel").val();	// 전화번호
 		registInfo.restRuntime = "";	// 영업시간
@@ -94,16 +97,14 @@ $(document).ready(function() {
 					runtime[idx] = dayValue + " " + document.getElementById("time1" + dayValue).value + " ~ " + document.getElementById("time2" + dayValue).value;
 				}
 			});
-			registInfo.restRuntime += (idx !== runtime.length - 1 ? runtime[idx] + "," : runtime[idx]);		// 영업시간 상세
+			registInfo.restRuntime += (idx !== runtime.length - 1 ? runtime[idx] + "/" : runtime[idx]);		// 영업시간 상세
 		});
 		
 		var conv = "";
 		$('input[name="restConv"]:checked').each(function() {
-			conv += this.value + ",";
+			conv += this.value + "/";
 		});
 		registInfo.restConvenience = conv.slice(0, -1);		// 편의시설
-		
-// 		console.log(registInfo);
 	});
 	
 	
@@ -113,19 +114,20 @@ $(document).ready(function() {
 	// next 클릭 시 객체 정보 저장
 	$("#btn-next2").click(function() {
 		registInfo.restDescription = $("#restDescription").val();		// 가게 소개
+		registInfo.restExterior = $("#restExterior").val();				// 외관 사진
+		registInfo.restInterior = $("#restInterior").val();				// 내부 사진
 		
-		var filePathSplit1 = $("#restExterior").val().split("\\");
-		var filePathSplit2 = $("#restInterior").val().split("\\");
-		registInfo.restExterior = filePathSplit1[filePathSplit1.length - 1];
-		registInfo.restInterior = filePathSplit2[filePathSplit2.length - 1];
-		
-		console.log(registInfo);
+// 		var filePathSplit1 = $("#restExterior").val().split("\\");
+// 		var filePathSplit2 = $("#restInterior").val().split("\\");
+// 		registInfo.restExterior = filePathSplit1[filePathSplit1.length - 1];
+// 		registInfo.restInterior = filePathSplit2[filePathSplit2.length - 1];
 	});
 	
 	
 	
 	// --------------------- step3 ----------------------------
 	
+	// 메뉴추가 버튼 클릭
 	var cnt = 2;
 	$("#btnAddMenu").click(function(event) {
 		if (cnt <= 3) {
@@ -142,6 +144,45 @@ $(document).ready(function() {
 		}
 		
 		cnt++;
+	});
+	
+	
+	
+	// --------------------- 신청 버튼 ----------------------------
+	
+	$("#btn-submit").click(function() {
+		console.log(registInfo);
+		
+		// restaurant 관련 정보
+		$.ajax({
+			url : "${contextPath}/business/registration",
+			type : "POST",
+			contentType : "application/json",
+			data : JSON.stringify(registInfo),
+			success : function(msg) {
+				alert("전송 성공 : " + msg);
+			},
+			error : function() {
+				alert("실패 ㅜㅜ");
+			}
+		});
+		
+		// menu 관련 정보가 있다면 전송
+// 		console.log(registMenu);
+// 		if (registMenu.length !== 0) {
+// 			$.ajax({
+// 				url : "${contextPath}/business/addMenu",
+// 				type : "POST",
+// 				contentType : "application/json",
+// 				data : JSON.stringify(registMenu),
+// 				success : function(msg) {
+// 					alert("전송 성공 : " + msg);
+// 				},
+// 				error : function() {
+// 					alert("실패 ㅜㅜ");
+// 				}
+// 			});
+// 		}
 	});
 	
 });
@@ -364,7 +405,7 @@ function kakaoPostcodeAPI() {
 
 <div>
 	<form id="fr-step3" action="" method="post" enctype="multipart/form-data">
-		<button type="button" id="btnAddMenu">추가</button> <br>
+		<button type="button" id="btnAddMenu">메뉴 추가</button> <br>
 		
 		<b>메뉴 1</b> <br>
 		이름 <input type="text" id="menuName1" placeholder="메뉴 이름"> <br>
@@ -377,7 +418,7 @@ function kakaoPostcodeAPI() {
 </div>
 
 <input type="button" id="btn-prev2" class="btn" value="이전" onclick="showStep('#step2');">
-<input type="button" id="btn-next3" class="btn" value="신청">
+<input type="button" id="btn-submit" class="btn" value="신청">
 
 </div>		<!-- step2 끝 -->
 
