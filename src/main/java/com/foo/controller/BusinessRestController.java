@@ -38,6 +38,8 @@ public class BusinessRestController {
 		logger.debug("@@@@@@@@@@@@@@@@@@@@@ registRestaurant() 호출");
 		logger.debug("revo : {}", revo);
 		
+		// sevice 추가 해야함!
+		
 		return "ok";
 	}
 	
