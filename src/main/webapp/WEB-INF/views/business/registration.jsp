@@ -168,21 +168,6 @@ $(document).ready(function() {
 		});
 		
 		// menu 관련 정보가 있다면 전송
-// 		console.log(registMenu);
-// 		if (registMenu.length !== 0) {
-// 			$.ajax({
-// 				url : "${contextPath}/business/addMenu",
-// 				type : "POST",
-// 				contentType : "application/json",
-// 				data : JSON.stringify(registMenu),
-// 				success : function(msg) {
-// 					alert("전송 성공 : " + msg);
-// 				},
-// 				error : function() {
-// 					alert("실패 ㅜㅜ");
-// 				}
-// 			});
-// 		}
 	});
 	
 });
