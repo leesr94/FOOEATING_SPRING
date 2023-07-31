@@ -168,6 +168,7 @@ $(document).ready(function() {
 		});
 		
 		// menu 관련 정보가 있다면 전송
+		// push안됨 ㅜㅜ
 	});
 	
 });
